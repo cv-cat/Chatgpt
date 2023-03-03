@@ -3,138 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Chat App</title>
-    <!-- 引入Vue和ElementUI库 -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
-    <!-- <script src="https://unpkg.com/element-ui/lib/index.js"></script> -->
-    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.5/axios.min.js"></script> -->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/display.css">
-    <!-- 引入本地Vue和ElementUI库 -->
     <script src="js/vue.js"></script>
     <script src="js/index.js"></script>
     <script src="js/axios.js"></script>
-    <!-- <link rel="stylesheet" href="css/display.css"> -->
-    <!-- <link rel="stylesheet" href="css/index.css"> -->
+    <script src="js/showdown.js"></script>
+    <link rel="stylesheet" href="css/mkdown.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/display.css">
+    <link rel="stylesheet" href="css/all.css">
+    <link rel="stylesheet" href="css/chat.css">
     <link rel="shortcut icon" href="favicon.ico">
 </head>
-<style>
-    .el-container {
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    /* 气泡样式 */
-    .message-bubble {
-        display: inline-block;
-        padding: 8px 12px;
-        border-radius: 20px;
-        background-color: #f2f2f2;
-        color: #555;
-        max-width: 80%;
-    }
-
-    .message-bubble.is-right {
-        float: right;
-        background-color: #007aff;
-        color: #fff;
-    }
-
-    /* 聊天记录样式 */
-    .chat-records {
-        height: calc(100vh - 200px); /* 让聊天记录容器自适应高度 */
-        overflow-y: scroll;
-    }
-    .chat-record-item {
-        margin: 10px;
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: flex-start;
-    }
-    .chat-record-item.is-right {
-        align-items: flex-end;
-        justify-content: flex-end;
-    }
-    .chat-record-item.is-right .el-avatar {
-        margin-left: 10px;
-    }
-    .chat-record-item .el-popover {
-        margin-right: 10px;
-        margin-left: 10px;
-    }
-
-    /* 输入框样式 */
-    .chat-input {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
-    .chat-input .el-input {
-        width: calc(100% - 80px);
-        margin-right: 10px;
-    }
-    .chat-input .el-button {
-        width: 70px;
-    }
-    .el-popover {
-        position: relative!important;
-    }
-    .author-info {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 10px;
-        border: 1px solid #ccc;
-        background-color: #fff;
-        z-index: 10;
-        transition: all 0.5s;
-    }
-    .author {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 10px;
-    }
-    .author img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
-    .author span {
-        font-size: 18px;
-    }
-    .close-btn {
-        font-size: 16px;
-        color: #007aff;
-        cursor: pointer;
-    }
-    .fade-enter-active, .fade-leave-active {
-        transition: opacity 0.5s;
-    }
-    .fade-enter, .fade-leave-to {
-        opacity: 0;
-    }
-</style>
 <body>
     <div id="app">
         <el-container style="max-width: 800px;margin: 0 auto;">
-            <el-header>Chat App</el-header>
-            <el-main>
+            <el-header class="header" style="position: relative;">
+                Chat App v3.1
+                <div class="speak_switch">
+                    <el-switch v-model="hasSpeechSynthesisUtterance" inline-prompt active-text="朗读模式开启" inactive-text="朗读模式关闭" @change="toggleVoice"></el-switch>
+                </div>
+                <div class="switch_bg">
+                    切换背景 <i class="fas fa-arrow-right"></i>
+                </div>
+            </el-header>
+            <el-main class="chat-box">
                 <div class="chat-records" ref="chatRecords">
                     <el-timeline>
                         <el-timeline-item v-for="(message, index) in messages" :key="index">
-                            <div class="chat-record-item" :class="{ 'is-right': message.isRight }">
-                                <div class="el-avatar" :style="{ 'background-color': message.isRight ? '#007aff' : '#f2f2f2' }">{{ message.avatar }}</div>
-                                <div class="el-popover el-popover--plain" :class="{ 'is-right': message.isRight }">
-                                    <div class="message-bubble" :class="{ 'is-right': message.isRight }">{{ message.content }}</div>
-                                </div>
+                            <div class="chat-record-item" v-if="message.isRight" :class="{ 'is-right': message.isRight }">
+                                <div class="message-bubble" :class="{ 'is-right': message.isRight }">{{ message.content }}</div>
+                                <div class="el-avatar" :style="{ 'background-color': message.isRight ? '#e6a23c' : 'rgb(181 91 91)' }">{{ message.avatar }}</div>
+                            </div>
+                            <div class="chat-record-item" v-else :class="{ 'is-right': message.isRight }">
+                                <div class="el-avatar" :style="{ 'background-color': message.isRight ? '#e6a23c' : 'rgb(181 91 91)' }">{{ message.avatar }}</div>
+                                <div class="message-bubble markdown-body" :class="{ 'is-right': message.isRight }"  v-html="message.content"></div>
                             </div>
                         </el-timeline-item>
                     </el-timeline>
@@ -142,146 +44,62 @@
             </el-main>
             <el-footer>
                 <div class="chat-input">
-                    <el-input v-model="inputMessage" placeholder="请输入消息内容"></el-input>
-                    <el-button type="primary" :loading="loading" @click="sendMessage">发送</el-button>
+                    <el-input id="chat_input" v-model="inputMessage" placeholder="请输入消息内容">
+                        <el-button slot="append" @click="toggleMicrophone" ref="microphoneBtn">
+                            <i :class="['el-icon-microphone', isRecording ? 'el-icon-loading' : '']"></i>
+                        </el-button>
+                    </el-input>
+                    <el-button id="submit" type="primary" :loading="loading" @click="sendMessage" v-if="loading"></el-button>
+                    <el-button id="submit" type="primary" :loading="loading" @click="sendMessage" v-else>发送</el-button>
                 </div>
             </el-footer>
-            <div  class="author-info" v-show="showAuthorInfo" @mouseenter="showEmail = true" @mouseleave="showEmail = false">
-                <div class="author" >
-                    <img src="images/cvcat.jpg" alt="Author 1">
-                     <span>cvcat</span>
+            <div  class="author-info" v-show="showAuthorInfo">
+                <div class="authors" @mouseenter="showEmail = true" @mouseleave="showEmail = false">
+                    <div class="author" >
+                        <img src="images/cvcat.jpg" alt="Author 1">
+                         <span>cvcat</span>
+                    </div>
+                    <el-popover placement="bottom" trigger="manual" v-model="showEmail">
+                        <a href="tencent://Message/?Uin=992822653&amp;websiteName=q-zone.qq.com&amp;Menu=yes" target="_blank">
+                            <div>{{ email[0] }}</div>
+                        </a> 
+                    </el-popover>
+                    <div class="author">
+                        <img src="images/crushend.jpg" alt="Author 1">
+                        <span>crush</span>
+                    </div>
+                    <el-popover placement="bottom" trigger="manual" v-model="showEmail">
+                        <a href="tencent://Message/?Uin=2925663480&amp;websiteName=q-zone.qq.com&amp;Menu=yes" target="_blank">
+                            <div>{{ email[1] }}</div>
+                        </a> 
+                    </el-popover>
                 </div>
-                <el-popover placement="bottom" trigger="manual" v-model="showEmail">
-                    <div>{{ email[0] }}</div>
-                </el-popover>
-                <div class="author">
-                    <img src="images/crushend.jpg" alt="Author 1">
-                    <span>crush</span>
-                </div>
-                <el-popover placement="bottom" trigger="manual" v-model="showEmail">
-                    <div>{{ email[1] }}</div>
-                </el-popover>
-                <span class="close-btn" @click="showAuthorInfo = false">x</span>
+                <hr>
+                <span>💵0.02美元 / 1K 字符</span>
+                <el-skeleton style="width: 100%;text-align: center;margin: 10px 0;" :loading="today_cost_loading" animated>
+                    <template #template>
+                            <el-skeleton-item variant="p" style="text-align: center" />
+                    </template>
+                    <template #default>
+                        <div style="text-align: center;">{{ today_cost }}</div>
+                    </template>
+                </el-skeleton>
+                <el-skeleton style="width: 100%;text-align: center;margin-bottom: 10px;" :loading="balance_loading" animated>
+                    <template #template>
+                            <el-skeleton-item variant="p" style="text-align: center" />
+                    </template>
+                    <template #default>
+                        <div style="text-align: center;">{{ balance }}</div>
+                    </template>
+                </el-skeleton>
+                <span style="height: 22px;line-height: 22px;">赞助👇</span>
+                <img src="images/pay_zfb.jpg" alt="" width="150px">
+                <hr>
+                <span class="close-btn" @click="showAuthorInfo = false" style="height: 22px;line-height: 22px;">x</span>
             </div>
-            <!-- <div class="author-info" v-show="showAuthorInfo_">
-                <div class="author">
-                    <img src="images/cvcat.jpg" alt="Author 1">
-                    <span>cvcat</span>
-                </div>
-                <div class="author">
-                    <img src="images/crushend.jpg" alt="Author 2">
-                    <span>crush</span>
-                </div>
-                <div class="close-btn" @click="hideAuthorInfo">Close</div>
-            </div> -->
         </el-container>
     </div>
-    <script>
-        // 定义Vue实例
-        new Vue({
-            el: '#app',
-            data: {
-                messages: [], // 存储聊天记录
-                inputMessage: '', // 输入框中的内容
-                all_message: '',
-                loading: false, // 是否在请求期间禁用发送按钮
-                showAuthorInfo: true, // 是否显示作者信息
-                showEmail: false,
-                email: ['992822653@qq.com', 'crushend@qq.com'],
-                api: "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"
-            },
-            methods: {
-                sendMessage() {
-                    if (this.inputMessage) {
-                        // 禁用发送按钮
-                        this.loading = true;
-                        // 整个记录
-                        // this.all_message += "Human:" + this.inputMessage + '\n'
-                        this.all_message += "" + this.inputMessage + '\n'
-                        // 添加用户发送的消息到聊天记录中
-                        this.messages.push({
-                            isRight: true, // 是否在右侧显示
-                            avatar: '我', // 头像
-                            content: this.inputMessage // 消息内容
-                        });
-                        // 发送消息到服务器
-                        axios.post('https://api.openai.com/v1/completions', {
-                            "model": "text-davinci-003",
-                            "prompt": this.all_message, 
-                            "max_tokens": 100,
-                            "temperature": 0.6,
-                            // "top_p": 1,
-                            // "n": 1,
-                            // "stream": false,
-                            // "logprobs": null,
-                            // "stop": "\n"
-                        }, {
-                            headers: { 
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + this.api 
-                            }
-                        }).then(response => { 
-                            this.messages.push({
-                                isRight: false, // 是否在右侧显示
-                                avatar: 'Chat', // 头像
-                                content: response.data.choices[0].text // 消息内容
-                            });
-                            // this.all_message += "AI:" + response.data.choices[0].text + '\n'
-                            this.all_message += "" + response.data.choices[0].text + '\n'
-                        }).catch(error => { 
-                            this.messages.push({
-                                isRight: false, // 是否在右侧显示
-                                avatar: 'Chat', // 头像
-                                content: 'error' // 消息内容
-                            });
-                        }).finally(() => {
-                            // 滚动到底部
-                            // this.$refs.chatRecords.scrollTop = this.$refs.chatRecords.scrollHeight;
-                            this.scrollToBottom();
-                            // 启用输入框和按钮
-                            this.loading = false;
-                            // 清空输入框
-                            this.inputMessage = '';
-                        });
-                        
-                    }else{
-                        this.$message({
-                            message: "请输入消息",
-                            type: "warning"
-                        });
-                        return;
-                    }
-                },
-                scrollToBottom() {
-                    // 获取滚动条所在的元素
-                    const el = document.querySelector('.chat-records');
-                    // 获取元素的高度
-                    const maxScrollTop = el.scrollHeight - el.clientHeight;
-                    // 滚动到底部
-                    const scrollOptions = {
-                        top: maxScrollTop,
-                        behavior: 'smooth' // 平滑滚动
-                    };
-                    el.scrollTo(scrollOptions);
-                },
-                // showAuthorInfo() {
-                //     this.showAuthorInfo_ = true;
-                // },
-                // hideAuthorInfo() {
-                //     this.showAuthorInfo_ = false;
-                // }
-            }
-        });
-        var submit = document.querySelector("button");
-        //监听回车事件
-        document.onkeydown = function (e) {
-            var ev = document.all ? window.event : e;
-            if (ev.keyCode == 13) {
-                submit.click();
-            }
-        };
-    </script>
+    <script src="js/chat.js"></script>
 </body>
-    <script src="js/bg.js"></script>
 </html>
     

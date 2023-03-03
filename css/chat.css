@@ -1,0 +1,195 @@
+p {
+    margin: 0;
+    padding: 0;
+}
+a {
+    text-decoration: none;
+    color: #007aff;
+}
+.el-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.switch_bg {
+    font-size: 1rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 10px;
+    cursor: pointer;
+}
+/* 气泡样式 */
+/* .message-bubble {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background-color: #f2f2f2;
+    color: #555;
+    max-width: 80%;
+} */
+.message-bubble {
+    display: inline-block;
+    padding: 14px 20px;
+    border-radius: 20px;
+    background-color: #f2f2f2;
+    color: #555;
+    max-width: 80%;
+    margin: 0 18px;
+}
+
+
+.message-bubble.is-right {
+    float: right;
+    background-color: #66b1ff;
+    color: #fff;
+}
+
+/* 聊天记录样式 */
+.chat-records {
+    height: calc(100vh - 200px); /* 让聊天记录容器自适应高度 */
+    overflow-y: auto;
+}
+.chat-records::-webkit-scrollbar {
+    width: 8px;
+}
+  
+.chat-records::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: #c2c2c2;
+}
+
+.chat-records::-webkit-scrollbar-thumb:hover {
+    background-color: #a1a1a1;
+}
+
+.chat-records::-webkit-scrollbar-track {
+    background-color: #f2f2f2;
+    border-radius: 8px;
+}
+
+
+
+.markdown-body pre::-webkit-scrollbar {
+    height: 8px;
+}
+  
+.markdown-body pre::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: #c2c2c2;
+}
+
+.markdown-body pre::-webkit-scrollbar-thumb:hover {
+    background-color: #a1a1a1;
+}
+
+.markdown-body pre::-webkit-scrollbar-track {
+    background-color: #f2f2f2;
+    border-radius: 8px;
+}
+
+.chat-record-item {
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.chat-record-item.is-right {
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+/* .chat-record-item.is-right .el-avatar {
+    margin-left: 10px;
+} */
+.chat-record-item .el-popover {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.chat-record-item.is-right {
+    align-items: flex-start!important;
+}
+.el-avatar {
+    flex-shrink: 0!important;
+}
+/* 输入框样式 */
+.chat-input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.chat-input .el-input {
+    width: calc(100% - 80px);
+    margin-right: 10px;
+}
+.chat-input .el-button {
+    width: 70px;
+}
+.el-popover {
+    position: relative!important;
+}
+.author-info {
+    width: 200px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    z-index: 999999;
+    transition: all 0.5s;
+}
+.authors{
+    width: 100%;
+    cursor: pointer;
+}
+.author {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.author img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.author span {
+    font-size: 18px;
+}
+.close-btn {
+    font-size: 16px;
+    color: #007aff;
+    cursor: pointer;
+}
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+
+#chat_input {
+    padding: 0 24px;
+}
+.glowing {
+    box-shadow: 0 0 10px #6ab8f7;
+}
+
+/* v1.5 */
+.markdown-body{
+    font-size: 14px;
+    /* 微软雅黑 */
+    font-family: "Microsoft YaHei", "微软雅黑", "STXihei", "华文细黑", "sans-serif";
+    line-height: 1.4;
+    background-color: #e8c9c9
+}
+.markdown-body pre{
+    border-radius: 22px;
+}
