@@ -18,4 +18,5 @@
 ## 注意事项
 1. 已开源本项目v2版本，v3版本暂不开源，公网访问v3 https://crushcreate.cc/chat/
 2. 请在 chat.js 中填入自己的 api_key ，在 https://platform.openai.com/account/api-keys 申请
-3. 欢迎 fork and star
+3. api已被墙，使用和部署请使用魔法
+4. 欢迎 fork and star
